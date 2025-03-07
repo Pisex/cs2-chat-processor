@@ -1,0 +1,53 @@
+"Phrases"
+{
+    "Cstrike_Chat_CT_Loc"
+    {
+		"en"			" {DEFAULT}[TEAM]{TEAM} %s{DEFAULT} {DEFAULT}➛ %s"
+        "ru"            " {DEFAULT}[КОМАНДА]{TEAM} %s{DEFAULT} {DEFAULT}➛ %s"
+    }
+    "Cstrike_Chat_T_Loc"
+    {
+		"en"			" {DEFAULT}[TEAM]{TEAM} %s{DEFAULT} {DEFAULT}➛ %s"
+        "ru"            " {DEFAULT}[КОМАНДА]{TEAM} %s{DEFAULT} {DEFAULT}➛ %s"
+    }
+    "Cstrike_Chat_CT_Dead"
+    {
+		"en"			" {DEFAULT}[TEAM]{TEAM} %s{GRAY} [DEAD] {DEFAULT}➛ %s"
+        "ru"            " {DEFAULT}[КОМАНДА]{TEAM} %s{GRAY} [МЁРТВ] {DEFAULT}➛ %s"
+    }
+    "Cstrike_Chat_T_Dead"
+    {
+		"en"			" {DEFAULT}[TEAM]{TEAM} %s{GRAY} [DEAD] {DEFAULT}➛ %s"
+        "ru"            " {DEFAULT}[КОМАНДА]{TEAM} %s{GRAY} [МЁРТВ] {DEFAULT}➛ %s"
+    }
+    "Cstrike_Chat_CT"
+    {
+		"en"			" {DEFAULT}[TEAM]{TEAM} %s{DEFAULT} {DEFAULT}➛ %s"
+        "ru"            " {DEFAULT}[КОМАНДА]{TEAM} %s{DEFAULT} {DEFAULT}➛ %s"
+    }
+    "Cstrike_Chat_T"
+    {
+		"en"			" {DEFAULT}[TEAM]{TEAM} %s{DEFAULT} {DEFAULT}➛ %s"
+        "ru"            " {DEFAULT}[КОМАНДА]{TEAM} %s{DEFAULT} {DEFAULT}➛ %s"
+    }
+    "Cstrike_Chat_All"
+    {
+		"en"			" {DEFAULT}[ALL]{TEAM} %s{DEFAULT} {DEFAULT}➛ %s"
+        "ru"            " {DEFAULT}[ВСЕМ]{TEAM} %s{DEFAULT} {DEFAULT}➛ %s"
+    }
+    "Cstrike_Chat_AllDead"
+    {
+		"en"			" {DEFAULT}[ALL]{TEAM} %s{GRAY} [DEAD] {DEFAULT}➛ %s"
+        "ru"            " {DEFAULT}[ВСЕМ]{DEFAULT} %s{GRAY} [МЁРТВ] {DEFAULT}➛ %s"
+    }
+    "Cstrike_Chat_AllSpec"
+    {
+		"en"			" {GRAY}[SPECTATOR]{DEFAULT} %s ➛ %s"
+        "ru"            " {GRAY}[ЗРИТ]{DEFAULT} %s ➛ %s"
+    }
+    "Cstrike_Chat_Spec"
+    {
+		"en"			" {GRAY}[TEAM]{DEFAULT} %s ➛ %s"
+        "ru"            " {GRAY}[КОМАНДА]{DEFAULT} %s ➛ %s"
+    }
+}
