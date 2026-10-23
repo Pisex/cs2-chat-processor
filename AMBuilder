@@ -6,12 +6,22 @@ for sdk_target in MMSPlugin.sdk_targets:
   cxx = sdk_target.cxx
 
   cxx.cxxflags += ['-Wno-invalid-offsetof']
+  if cxx.target.platform == 'linux':
+    cxx.defines += [
+      'bswap_16=__builtin_bswap16',
+      'bswap_32=__builtin_bswap32',
+      'bswap_64=__builtin_bswap64',
+    ]
   binary = MMSPlugin.HL2Library(builder, cxx, MMSPlugin.plugin_name, sdk)
 
   binary.custom = [builder.tools.Protoc(protoc = sdk_target.protoc, sources = [
-    os.path.join(sdk['path'], 'common', 'network_connection.proto'),
-    os.path.join(sdk['path'], 'common', 'networkbasetypes.proto'),
-    os.path.join(sdk['path'], 'game', 'shared', 'usermessages.proto'),
+    os.path.join(sdk['path'], 'thirdparty', 'game_protobufs', 'csgo', 'valveextensions.proto'),
+    os.path.join(sdk['path'], 'thirdparty', 'game_protobufs', 'csgo', 'netmessages.proto'),
+    os.path.join(sdk['path'], 'thirdparty', 'game_protobufs', 'csgo', 'source2_steam_stats.proto'),
+    os.path.join(sdk['path'], 'thirdparty', 'game_protobufs', 'csgo', 'networksystem_protomessages.proto'),
+    os.path.join(sdk['path'], 'thirdparty', 'game_protobufs', 'csgo', 'network_connection.proto'),
+    os.path.join(sdk['path'], 'thirdparty', 'game_protobufs', 'csgo', 'networkbasetypes.proto'),
+    os.path.join(sdk['path'], 'thirdparty', 'game_protobufs', 'csgo', 'usermessages.proto'),
   ])]
   
   binary.compiler.cxxincludes += [

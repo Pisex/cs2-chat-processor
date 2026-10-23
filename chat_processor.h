@@ -13,12 +13,12 @@
 #include <deque>
 #include <functional>
 #include <utlstring.h>
-#include <KeyValues.h>
+#include <keyvalues.h>
 #include "CCSPlayerController.h"
 #include "include/menus.h"
 #include "include/chat_processor.h"
 
-class ChatProcessor final : public ISmmPlugin, public IMetamodListener
+class ChatProcessor final : public ISmmPlugin, public IServerListener, public IMetamodListener
 {
 public:
 	bool Load(PluginId id, ISmmAPI* ismm, char* error, size_t maxlen, bool late);
@@ -35,7 +35,7 @@ private:
 	const char* GetDate();
 	const char* GetLogTag();
 private:
-	void OnPostEvent(CSplitScreenSlot slot, bool bReliable, int nTick, const uint64* pOutPackets, INetworkMessageInternal* pMsg, const CNetMessage* pNetMsg, unsigned long nChannel, NetChannelBufType_t eBufType);
+	void PostEvent(int nClientCount, const uint64* pOutPackets, INetworkMessageInternal* pMsg, const CNetMessage* pNetMsg) override;
 };
 
 class ChatProcessorApi : public IChatProcessorApi

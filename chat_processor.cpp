@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <usermessages.h>
 #include "chat_processor.h"
 #include "metamod_oslink.h"
 #include "schemasystem/schemasystem.h"
@@ -21,12 +22,6 @@ IUtilsApi* g_pUtils;
 ChatProcessorApi* g_pChatProcessorApi = nullptr;
 IChatProcessorApi* g_pChatProcessorCore = nullptr;
 
-SH_DECL_HOOK8_void(IGameEventSystem, PostEventAbstract, SH_NOATTRIB, 0, CSplitScreenSlot, bool, int, const uint64*, INetworkMessageInternal*, const CNetMessage*, unsigned long, NetChannelBufType_t)
-
-CGameEntitySystem* GameEntitySystem()
-{
-	return g_pUtils->GetCGameEntitySystem();
-}
 
 void StartupServer()
 {
@@ -56,8 +51,8 @@ bool ChatProcessor::Load(PluginId id, ISmmAPI* ismm, char* error, size_t maxlen,
 	GET_V_IFACE_CURRENT(GetFileSystemFactory, g_pFullFileSystem, IFileSystem, FILESYSTEM_INTERFACE_VERSION);
 	GET_V_IFACE_CURRENT(GetEngineFactory, engine, IVEngineServer2, SOURCE2ENGINETOSERVER_INTERFACE_VERSION);
 	GET_V_IFACE_ANY(GetEngineFactory, g_gameEventSystem, IGameEventSystem, GAMEEVENTSYSTEM_INTERFACE_VERSION);
+	GET_V_IFACE_CURRENT(GetEngineFactory, g_pGameResourceServiceServer, IGameResourceService, GAMERESOURCESERVICESERVER_INTERFACE_VERSION);
 
-	SH_ADD_HOOK(IGameEventSystem, PostEventAbstract, g_gameEventSystem, SH_MEMBER(this, &ChatProcessor::OnPostEvent), false);
 
 	g_pChatProcessorApi = new ChatProcessorApi();
 	g_pChatProcessorCore = g_pChatProcessorApi;
@@ -95,13 +90,13 @@ std::string EscapeString(const std::string &str)
 	return result;
 }
 
-void ChatProcessor::OnPostEvent(CSplitScreenSlot slot, bool bReliable, int nTick, const uint64* pOutPackets, INetworkMessageInternal* pMsg, const CNetMessage* pNetMsg, unsigned long nChannel, NetChannelBufType_t eBufType)
+void ChatProcessor::PostEvent(int nClientCount, const uint64* pOutPackets, INetworkMessageInternal* pMsg, const CNetMessage* pNetMsg)
 {
 	NetMessageInfo_t *info = pMsg->GetNetMessageInfo();
 
 	if(info->m_MessageId == UM_SayText2)
 	{
-		auto msg = const_cast<CNetMessage*>(pNetMsg)->ToPB<CUserMessageSayText2>();
+		auto msg = const_cast<CNetMessage*>(pNetMsg)->As<CUserMessageSayText2_t>();
 		int iSlot = msg->entityindex()-1;
 		std::string szMessageName = msg->messagename();
 		std::string szParam1 = msg->param1();
@@ -110,7 +105,7 @@ void ChatProcessor::OnPostEvent(CSplitScreenSlot slot, bool bReliable, int nTick
 		std::string szMessage = szParam2;
 		std::string szMessageEscape = EscapeString(szMessage);
 		bool bBlock = g_pChatProcessorApi->SendHookOnChatMessage(iSlot, szName, szMessageEscape);
-		if(bBlock) RETURN_META(MRES_SUPERCEDE);
+		if(bBlock) { *const_cast<uint64*>(pOutPackets) = 0; return; }
 		char szBuffer[256];
 		g_SMAPI->Format(szBuffer, sizeof(szBuffer), g_vecPhrases[szMessageName].c_str(), szName.c_str(), szMessageEscape.c_str());
 		msg->set_messagename(Colorizer(szBuffer));
@@ -120,7 +115,7 @@ void ChatProcessor::OnPostEvent(CSplitScreenSlot slot, bool bReliable, int nTick
 
 bool ChatProcessor::Unload(char *error, size_t maxlen)
 {
-	SH_REMOVE_HOOK(IGameEventSystem, PostEventAbstract, g_gameEventSystem, SH_MEMBER(this, &ChatProcessor::OnPostEvent), false);
+	if(g_pUtils) g_pUtils->ClearAllHooks(g_PLID);
 	ConVar_Unregister();
 	
 	return true;
@@ -155,7 +150,8 @@ void ChatProcessor::AllPluginsLoaded()
 		engine->ServerCommand(sBuffer.c_str());
 		return;
 	}
-	g_pUtils->StartupServer(g_PLID, StartupServer);
+	g_pUtils->AddServerListener(g_PLID, this);
+	g_pUtils->StartupServer(g_PLID, ::StartupServer);
 	LoadPhrases();
 }
 
